@@ -96,7 +96,7 @@ void lv_fs_if_init(void)
 	fs_drv.write = fs_write;
 	fs_drv.seek = fs_seek;
 	fs_drv.tell = fs_tell;
-	fs_drv.free = fs_free;
+	fs_drv.free_space = fs_free;
 	fs_drv.size = fs_size;
 	fs_drv.remove = fs_remove;
 	fs_drv.rename = fs_rename;

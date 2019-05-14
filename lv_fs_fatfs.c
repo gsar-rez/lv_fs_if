@@ -80,7 +80,7 @@ void lv_fs_if_init(void)
     fs_drv.write = fs_write;
     fs_drv.seek = fs_seek;
     fs_drv.tell = fs_tell;
-    fs_drv.free = fs_free;
+    fs_drv.free_space = fs_free;
     fs_drv.size = fs_size;
     fs_drv.remove = fs_remove;
     fs_drv.rename = fs_rename;
@@ -120,7 +120,7 @@ static lv_fs_res_t fs_open (void * file_p, const char * path, lv_fs_mode_t mode)
     else if(mode == LV_FS_MODE_RD) flags = FA_READ;
     else if(mode == (LV_FS_MODE_WR | LV_FS_MODE_RD)) flags = FA_READ | FA_WRITE | FA_OPEN_ALWAYS;
 
-    FRESULT res = f_open(file_p, fn, flags);
+    FRESULT res = f_open(file_p, path, flags);
 
     if(res == FR_OK) {
     	f_lseek(file_p, 0);
@@ -154,7 +154,7 @@ static lv_fs_res_t fs_close (void * file_p)
  */
 static lv_fs_res_t fs_read (void * file_p, void * buf, uint32_t btr, uint32_t * br)
 {
-    FRESULT res = f_read(file_p, buf, btr, br);
+    FRESULT res = f_read(file_p, buf, btr, (unsigned int *)br);
     if(res == FR_OK) return LV_FS_RES_OK;
     else return LV_FS_RES_UNKNOWN;
 }
@@ -169,7 +169,7 @@ static lv_fs_res_t fs_read (void * file_p, void * buf, uint32_t btr, uint32_t * 
  */
 static lv_fs_res_t fs_write(void * file_p, const void * buf, uint32_t btw, uint32_t * bw)
 {
-	FRESULT res = f_write(file_p, buf, btw, bw);
+	FRESULT res = f_write(file_p, buf, btw, (unsigned int *)bw);
     if(res == FR_OK) return LV_FS_RES_OK;
     else return LV_FS_RES_UNKNOWN;
 }
@@ -195,7 +195,7 @@ static lv_fs_res_t fs_seek (void * file_p, uint32_t pos)
  */
 static lv_fs_res_t fs_size (void * file_p, uint32_t * size_p)
 {
-	(*sz) = f_size(((file_t *)file_p));
+	(*size_p) = f_size(((file_t *)file_p));
     return LV_FS_RES_OK;
 }
 
